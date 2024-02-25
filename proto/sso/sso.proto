@@ -14,6 +14,13 @@ service AuthService {
 
   // Метод для запроса кода подтверждения регистрации
   rpc RequestVerificationCode(VerificationCodeRequest) returns (VerificationCodeResponse);
+
+  //Метод для обновления личных данных
+  rpc RequestUpdateProfileData(UpdateProfileRequest) returns (UpdateProfileResponse);
+
+  //Метод для получения личных данных
+  rpc RequestGetProfileData(GetProfileRequest) returns (GetProfileResponse);
+
 }
 
 // Запрос на вход пользователя
@@ -58,11 +65,25 @@ message UpdateProfileRequest {
   string first_name = 2;
   string last_name = 3;
   string email = 4;
-  bytes profile_picture = 5; // Фотография профиля, передается в виде байтов
+  bytes profile_picture = 5;
 }
 
 // Ответ на запрос обновления профиля пользователя
 message UpdateProfileResponse {
   string error_message = 1;
+}
+
+// Запрос на получение личных данных
+message GetProfileRequest {
+  string access_token = 1;
+}
+
+// Ответ на запрос получения личных данных
+message GetProfileResponse {
+  string error_message = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  bytes  profile_picture = 5;
 }
 

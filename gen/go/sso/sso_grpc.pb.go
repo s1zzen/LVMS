@@ -28,6 +28,10 @@ type AuthServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// Метод для запроса кода подтверждения регистрации
 	RequestVerificationCode(ctx context.Context, in *VerificationCodeRequest, opts ...grpc.CallOption) (*VerificationCodeResponse, error)
+	// Метод для обновления личных данных
+	RequestUpdateProfileData(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error)
+	// Метод для получения личных данных
+	RequestGetProfileData(ctx context.Context, in *GetProfileRequest, opts ...grpc.CallOption) (*GetProfileResponse, error)
 }
 
 type authServiceClient struct {
@@ -65,6 +69,24 @@ func (c *authServiceClient) RequestVerificationCode(ctx context.Context, in *Ver
 	return out, nil
 }
 
+func (c *authServiceClient) RequestUpdateProfileData(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error) {
+	out := new(UpdateProfileResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/RequestUpdateProfileData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) RequestGetProfileData(ctx context.Context, in *GetProfileRequest, opts ...grpc.CallOption) (*GetProfileResponse, error) {
+	out := new(GetProfileResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/RequestGetProfileData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -75,6 +97,10 @@ type AuthServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// Метод для запроса кода подтверждения регистрации
 	RequestVerificationCode(context.Context, *VerificationCodeRequest) (*VerificationCodeResponse, error)
+	// Метод для обновления личных данных
+	RequestUpdateProfileData(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error)
+	// Метод для получения личных данных
+	RequestGetProfileData(context.Context, *GetProfileRequest) (*GetProfileResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -90,6 +116,12 @@ func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest
 }
 func (UnimplementedAuthServiceServer) RequestVerificationCode(context.Context, *VerificationCodeRequest) (*VerificationCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestVerificationCode not implemented")
+}
+func (UnimplementedAuthServiceServer) RequestUpdateProfileData(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestUpdateProfileData not implemented")
+}
+func (UnimplementedAuthServiceServer) RequestGetProfileData(context.Context, *GetProfileRequest) (*GetProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestGetProfileData not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -158,6 +190,42 @@ func _AuthService_RequestVerificationCode_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_RequestUpdateProfileData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RequestUpdateProfileData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/RequestUpdateProfileData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RequestUpdateProfileData(ctx, req.(*UpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_RequestGetProfileData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RequestGetProfileData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/RequestGetProfileData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RequestGetProfileData(ctx, req.(*GetProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +244,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestVerificationCode",
 			Handler:    _AuthService_RequestVerificationCode_Handler,
+		},
+		{
+			MethodName: "RequestUpdateProfileData",
+			Handler:    _AuthService_RequestUpdateProfileData_Handler,
+		},
+		{
+			MethodName: "RequestGetProfileData",
+			Handler:    _AuthService_RequestGetProfileData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
