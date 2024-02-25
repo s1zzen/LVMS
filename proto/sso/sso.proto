@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "sizzen.LVMS.v1;ssov1";
+
+// Определение сервиса для авторизации и работы с пользовательскими данными
+service AuthService {
+  // Метод для входа пользователя
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // Метод для регистрации пользователя
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  // Метод для запроса кода подтверждения регистрации
+  rpc RequestVerificationCode(VerificationCodeRequest) returns (VerificationCodeResponse);
+}
+
+// Запрос на вход пользователя
+message LoginRequest {
+  string phone_number = 1;
+  string password = 2;
+}
+
+// Ответ на запрос входа пользователя
+message LoginResponse {
+  string access_token = 1;
+  string error_message = 2;
+}
+
+// Запрос на получение кода подтверждения регистрации
+message VerificationCodeRequest {
+  string phone_number = 1;
+}
+
+// Ответ на запрос получения кода подтверждения регистрации
+message VerificationCodeResponse {
+  string verification_code = 1;
+  string error_message = 2;
+}
+
+// Запрос на регистрацию пользователя
+message RegisterRequest {
+  string phone_number = 1;
+  string password = 2;
+  string verification_code = 3;
+}
+
+// Ответ на запрос регистрации пользователя
+message RegisterResponse {
+  string access_token = 1;
+  string error_message = 2;
+}
+
+// Запрос на обновление профиля пользователя
+message UpdateProfileRequest {
+  string access_token = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  bytes profile_picture = 5; // Фотография профиля, передается в виде байтов
+}
+
+// Ответ на запрос обновления профиля пользователя
+message UpdateProfileResponse {
+  string error_message = 1;
+}
+
